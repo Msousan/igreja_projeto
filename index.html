@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Igreja - Integração de Novos Membros</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Ícones -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Comunidade da Igreja</h1>
+        <p>Integração, apoio e participação para novos membros</p>
+      </div>
+    </header>
+
+    <nav>
+      <ul>
+        <li>
+          <a href="#" data-tab="integracao" class="active"
+            ><i class="fas fa-users"></i> Integração</a
+          >
+        </li>
+        <li>
+          <a href="#" data-tab="suporte"
+            ><i class="fas fa-hand-holding-heart"></i> Suporte</a
+          >
+        </li>
+        <li>
+          <a href="#" data-tab="eventos"
+            ><i class="fas fa-calendar-alt"></i> Eventos</a
+          >
+        </li>
+        <li>
+          <a href="#" data-tab="contato"
+            ><i class="fas fa-phone"></i> Contato</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <main>
+      <!-- Integração -->
+      <section id="integracao" class="tab-content active">
+        <h2><i class="fas fa-users"></i> Integração de Novos Membros</h2>
+        <p>
+          Preencha o formulário abaixo para que possamos entrar em contato com
+          você e dar as boas-vindas à nossa comunidade.
+        </p>
+        <form class="formulario">
+          <label for="nome">Nome:</label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Digite seu nome"
+            required
+          />
+
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Digite seu email"
+            required
+          />
+
+          <label for="telefone">Telefone:</label>
+          <input
+            type="tel"
+            id="telefone"
+            name="telefone"
+            placeholder="Digite seu telefone"
+            required
+          />
+
+          <button type="submit">Enviar</button>
+        </form>
+      </section>
+
+      <!-- Suporte -->
+      <section id="suporte" class="tab-content">
+        <h2>
+          <i class="fas fa-hand-holding-heart"></i> Suporte Espiritual,
+          Emocional e Prático
+        </h2>
+        <p>
+          Disponibilizamos recursos como <strong>chats</strong>,
+          <strong>fóruns</strong> e <strong>materiais educativos</strong> para
+          que novos membros encontrem apoio, orientação e oportunidades de
+          crescimento.
+        </p>
+
+        <div class="suporte-content">
+          <!-- Sugestões de livros -->
+          <div class="suporte-box">
+            <h3><i class="fas fa-book"></i> Sugestões de Leitura</h3>
+            <ul>
+              <a
+                href="https://www.amazon.com.br/Peregrino-Jhon-Bunyan/dp/8584840206"
+                ><li>"O Peregrino" – John Bunyan</li></a
+              >
+              <a href="www.amazon.com.br/Cabana-William-P-Young/dp/8599296361"
+                ><li>"A Cabana" – William P. Young</li></a
+              >
+              <a
+                href="https://www.amazon.com.br/Cristianismo-puro-simples-Gabriele-Greggersen/dp/8578601777"
+                ><li>"Cristianismo Puro e Simples" – C. S. Lewis</li></a
+              >
+              <a
+                href="https://www.amazon.com.br/Cristianismo-puro-simples-Gabriele-Greggersen/dp/8578601777"
+                ><li>"A Jornada" – Billy Graham</li></a
+              >
+            </ul>
+          </div>
+
+          <!-- Pregações -->
+          <div class="suporte-box">
+            <h3><i class="fab fa-youtube"></i> Pregações no YouTube</h3>
+            <ul>
+              <li>
+                <a
+                  href="https://www.youtube.com/watch?v=4ijfiMrBF38&pp=ygU2aGVybmFuZGVzIGRpYXMgbG9wZXMgcHJlZ2HDp8OjbyBwYXJhIG5vdm9zIGNvbnZlcnRpZG9z"
+                  target="_blank"
+                  >Pregação 1 - Novo Nascimento</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.youtube.com/watch?v=-4zbE76FAfo&pp=ygUibHVjaWFubyBzdWJpcsOhIGNvbW8gbGVyIGEgYsOtYmxpYQ%3D%3D"
+                  target="_blank"
+                  >Pregação 2 - Como Ler a Biblía</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.youtube.com/watch?v=Ldt9jButBeY&pp=ygUwY29tbyB0ZXIgdW1hIHZpZGEgZGUgb3Jhw6fDo28gYXVndXN0dXMgbmljb2RlbXVz"
+                  target="_blank"
+                  >Pregação 3 - Como Ter Uma Vida de Oração</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Eventos -->
+      <section id="eventos" class="tab-content">
+        <h2><i class="fas fa-calendar-alt"></i> Agenda da Igreja</h2>
+        <ul class="agenda">
+          <li><strong>Sábado 16:30</strong> – Culto Kids</li>
+          <li><strong>Sábado 19:30</strong> – Culto de Estudo</li>
+          <li><strong>Domingo 19:00</strong> – Culto de Oração</li>
+          <li><strong>Domingo 19:30</strong> – Culto da Família</li>
+        </ul>
+      </section>
+
+      <!-- Contato -->
+      <section id="contato" class="tab-content">
+        <h2><i class="fas fa-phone"></i> Contato</h2>
+        <p>Entre em contato com a nossa equipe de acolhimento:</p>
+        <ul>
+          <li><strong>Email:</strong> contato@igreja.com.br</li>
+          <li><strong>Telefone:</strong> (00) 1234-5678</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Igreja - Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
