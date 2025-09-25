@@ -1,195 +1,102 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("JS carregado! Iniciando event listeners...");
+// script.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-  const links = document.querySelectorAll("nav a[data-tab]");
-  const tabs = document.querySelectorAll(".tab-content");
+// --- CONFIGURAÇÃO FIREBASE ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCq0LqGYwgaOcRehEo6-0Rvu5K1cE0AxxM",
+  authDomain: "projetoigreja-13bec.firebaseapp.com",
+  databaseURL: "https://projetoigreja-13bec-default-rtdb.firebaseio.com",
+  projectId: "projetoigreja-13bec",
+  storageBucket: "projetoigreja-13bec.firebasestorage.app",
+  messagingSenderId: "661621046603",
+  appId: "1:661621046603:web:76fb2948812ed37fe2fcce",
+  measurementId: "G-GPC39HQEQ7"
+};
 
-  // TROCA DE ABAS
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const membrosCol = collection(db, "membros");
 
-  links.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      links.forEach(l => l.classList.remove("active"));
-      tabs.forEach(tab => tab.classList.remove("active"));
-      link.classList.add("active");
-      const target = link.dataset.tab;
-      const targetTab = document.getElementById(target);
-      if (targetTab) {
-        targetTab.classList.add("active");
-        targetTab.scrollIntoView({ behavior: "smooth" });
-      }
+// --- FORMULÁRIO ---
+const form = document.getElementById("formIntegracao");
+const mensagem = document.getElementById("mensagem");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nome = document.getElementById("nome").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const telefone = document.getElementById("telefone").value.trim();
+
+  if (!nome || !email || !telefone) {
+    mensagem.textContent = "Por favor, preencha todos os campos!";
+    mensagem.style.color = "red";
+    return;
+  }
+
+  try {
+    await addDoc(membrosCol, { nome, email, telefone, createdAt: new Date() });
+    mensagem.textContent = "Cadastro realizado com sucesso!";
+    mensagem.style.color = "green";
+    form.reset();
+  } catch (err) {
+    console.error("Erro ao cadastrar:", err);
+    mensagem.textContent = "Erro ao cadastrar. Verifique o console.";
+    mensagem.style.color = "red";
+  }
+});
+
+// --- ADMIN ---
+const adminTab = document.getElementById("admin");
+const tbody = document.querySelector("#tabelaAdmin tbody");
+
+async function carregarAdmin() {
+  tbody.innerHTML = "";
+  try {
+    const q = query(membrosCol, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum cadastro encontrado</td></tr>';
+      return;
+    }
+    snapshot.forEach(docSnap => {
+      const r = docSnap.data();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.nome}</td>
+        <td>${r.email}</td>
+        <td>${r.telefone}</td>
+        <td><button class="btn-excluir" data-id="${docSnap.id}">Excluir</button></td>
+      `;
+      tbody.appendChild(tr);
     });
-  });
+  } catch (err) {
+    console.error("Erro admin:", err);
+  }
+}
 
-  // FORMULÁRIO
-
-  const form = document.getElementById("formIntegracao");
-  const mensagem = document.getElementById("mensagem");
-
-  if (form && mensagem) {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-
-      const nome = document.getElementById("nome").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const telefone = document.getElementById("telefone").value.trim();
-
-      if (!nome || !email || !telefone) {
-        mensagem.textContent = "Por favor, preencha todos os campos!";
-        mensagem.style.color = "red";
-        return;
-      }
-
+// Excluir cadastro
+tbody.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-excluir")) {
+    const id = e.target.dataset.id;
+    if (confirm("Tem certeza que deseja excluir?")) {
       try {
-        let registros = JSON.parse(localStorage.getItem("membros")) || [];
-        const novoRegistro = {
-          id: Date.now().toString(),
-          nome,
-          email,
-          telefone,
-          data: new Date().toLocaleDateString()
-        };
-        registros.push(novoRegistro);
-        localStorage.setItem("membros", JSON.stringify(registros));
-
-        mensagem.textContent = "Cadastro realizado com sucesso! Seus dados foram salvos.";
-        mensagem.style.color = "green";
-        form.reset();
-        mensagem.scrollIntoView({ behavior: "smooth" });
-      } catch (error) {
-        mensagem.textContent = "Erro ao salvar dados. Tente novamente.";
-        mensagem.style.color = "red";
-        console.error("Erro no localStorage:", error);
+        await deleteDoc(doc(db, "membros", id));
+        carregarAdmin();
+      } catch (err) {
+        console.error("Erro ao excluir:", err);
       }
-    });
-  }
-
-  // ADMIN - ACESSO
-
-  let segredo = "";
-  let timeoutId;
-
-  document.addEventListener("keydown", e => {
-    if (e.target.tagName === "INPUT") return;
-
-    segredo += e.key.toLowerCase();
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => segredo = "", 2000);
-
-    if (segredo.includes("admin123")) {
-      segredo = "";
-      clearTimeout(timeoutId);
-      mostrarAdmin();
     }
-  });
-
-  if (window.location.search.includes("admin=true")) {
-    mostrarAdmin();
   }
+});
 
-  // FUNÇÃO MOSTRAR ADMIN
-
-  function mostrarAdmin() {
-    tabs.forEach(tab => tab.classList.remove("active"));
-    const adminTab = document.getElementById("admin");
-    if (!adminTab) return console.error("Seção #admin não encontrada!");
-
+// Atalho para mostrar admin
+let segredo = "";
+document.addEventListener("keydown", (e) => {
+  segredo += e.key;
+  if (segredo.includes("admin123")) {
+    segredo = "";
     adminTab.classList.add("active");
-    adminTab.scrollIntoView({ behavior: "smooth" });
-
-
-    let adminMensagem = document.getElementById("adminMensagem");
-    if (!adminMensagem) {
-      adminMensagem = document.createElement("div");
-      adminMensagem.id = "adminMensagem";
-      adminTab.appendChild(adminMensagem);
-    }
-    adminMensagem.style.display = "none";
-
-
-    const tbody = document.querySelector("#tabelaAdmin tbody");
-    if (!tbody) return;
-
-
-    tbody.innerHTML = "";
-
-    try {
-      const registros = JSON.parse(localStorage.getItem("membros")) || [];
-
-      if (registros.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhum cadastro encontrado.</td></tr>';
-        return;
-      }
-
-      registros.forEach(r => {
-        const tr = document.createElement("tr");
-        tr.setAttribute("data-id", r.id);
-        tr.innerHTML = `
-          <td data-label="Nome">${r.nome}</td>
-          <td data-label="Email">${r.email}</td>
-          <td data-label="Telefone">${r.telefone}</td>
-          <td data-label="Data">${r.data || 'N/A'}</td>
-          <td data-label="Ações">
-            <button class="btn-excluir">
-              <i class="fas fa-trash"></i> Excluir
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } catch (error) {
-      console.error("Erro ao carregar admin:", error);
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Erro ao carregar dados.</td></tr>';
-    }
-  }
-
-  // DELEGAÇÃO DE EVENTO PARA EXCLUIR
-
-  const tbodyAdmin = document.querySelector("#tabelaAdmin tbody");
-  tbodyAdmin.addEventListener("click", e => {
-    const btn = e.target.closest(".btn-excluir");
-    if (!btn) return;
-
-    const tr = btn.closest("tr");
-    const id = tr.dataset.id;
-    const adminMensagem = document.getElementById("adminMensagem");
-
-    excluirRegistroDireto(id, tr, adminMensagem);
-  });
-
-  // FUNÇÃO EXCLUIR DIRETO
-
-  function excluirRegistroDireto(id, tr, adminMensagem) {
-    if (!confirm("Tem certeza que deseja excluir este cadastro? Esta ação não pode ser desfeita.")) return;
-
-    try {
-      let registros = JSON.parse(localStorage.getItem("membros")) || [];
-      registros = registros.filter(r => r.id !== id);
-      localStorage.setItem("membros", JSON.stringify(registros));
-
-
-      tr.remove();
-
-
-      const tbody = document.querySelector("#tabelaAdmin tbody");
-      if (tbody.children.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhum cadastro encontrado.</td></tr>';
-      }
-
-
-      adminMensagem.textContent = "Registro excluído com sucesso!";
-      adminMensagem.className = "sucesso";
-      adminMensagem.style.display = "block";
-      adminMensagem.scrollIntoView({ behavior: "smooth" });
-
-      setTimeout(() => adminMensagem.style.display = "none", 3000);
-
-      console.log("Registro excluído:", id);
-    } catch (error) {
-      adminMensagem.textContent = "Erro ao excluir registro. Tente novamente.";
-      adminMensagem.className = "erro";
-      adminMensagem.style.display = "block";
-      console.error("Erro ao excluir:", error);
-    }
+    carregarAdmin();
   }
 });
