@@ -1,13 +1,11 @@
-// script.js - Versão Final Completa
 document.addEventListener("DOMContentLoaded", () => {
   console.log("JS carregado! Iniciando event listeners...");
 
   const links = document.querySelectorAll("nav a[data-tab]");
   const tabs = document.querySelectorAll(".tab-content");
 
-  // ===========================
   // TROCA DE ABAS
-  // ===========================
+
   links.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
@@ -23,9 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ===========================
   // FORMULÁRIO
-  // ===========================
+
   const form = document.getElementById("formIntegracao");
   const mensagem = document.getElementById("mensagem");
 
@@ -67,9 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===========================
   // ADMIN - ACESSO
-  // ===========================
+
   let segredo = "";
   let timeoutId;
 
@@ -91,9 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarAdmin();
   }
 
-  // ===========================
   // FUNÇÃO MOSTRAR ADMIN
-  // ===========================
+
   function mostrarAdmin() {
     tabs.forEach(tab => tab.classList.remove("active"));
     const adminTab = document.getElementById("admin");
@@ -102,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     adminTab.classList.add("active");
     adminTab.scrollIntoView({ behavior: "smooth" });
 
-    // Mensagem
+
     let adminMensagem = document.getElementById("adminMensagem");
     if (!adminMensagem) {
       adminMensagem = document.createElement("div");
@@ -111,11 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     adminMensagem.style.display = "none";
 
-    // Seleciona o tbody
+
     const tbody = document.querySelector("#tabelaAdmin tbody");
     if (!tbody) return;
 
-    // Limpa tabela para evitar duplicação
+
     tbody.innerHTML = "";
 
     try {
@@ -128,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       registros.forEach(r => {
         const tr = document.createElement("tr");
-        tr.setAttribute("data-id", r.id); // garante que cada linha tem ID
+        tr.setAttribute("data-id", r.id);
         tr.innerHTML = `
           <td data-label="Nome">${r.nome}</td>
           <td data-label="Email">${r.email}</td>
@@ -148,9 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ===========================
   // DELEGAÇÃO DE EVENTO PARA EXCLUIR
-  // ===========================
+
   const tbodyAdmin = document.querySelector("#tabelaAdmin tbody");
   tbodyAdmin.addEventListener("click", e => {
     const btn = e.target.closest(".btn-excluir");
@@ -163,9 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
     excluirRegistroDireto(id, tr, adminMensagem);
   });
 
-  // ===========================
   // FUNÇÃO EXCLUIR DIRETO
-  // ===========================
+
   function excluirRegistroDireto(id, tr, adminMensagem) {
     if (!confirm("Tem certeza que deseja excluir este cadastro? Esta ação não pode ser desfeita.")) return;
 
@@ -174,16 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
       registros = registros.filter(r => r.id !== id);
       localStorage.setItem("membros", JSON.stringify(registros));
 
-      // Remove a linha da tabela diretamente
+
       tr.remove();
 
-      // Se não houver mais linhas, mostra mensagem
+
       const tbody = document.querySelector("#tabelaAdmin tbody");
       if (tbody.children.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Nenhum cadastro encontrado.</td></tr>';
       }
 
-      // Mensagem de sucesso
+
       adminMensagem.textContent = "Registro excluído com sucesso!";
       adminMensagem.className = "sucesso";
       adminMensagem.style.display = "block";
