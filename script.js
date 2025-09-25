@@ -100,3 +100,22 @@ document.addEventListener("keydown", (e) => {
     carregarAdmin();
   }
 });
+
+// --- ABAS ---
+const abas = document.querySelectorAll("nav a");
+const conteudos = document.querySelectorAll(".tab-content");
+
+abas.forEach(aba => {
+  aba.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    
+    abas.forEach(a => a.classList.remove("active"));
+    conteudos.forEach(c => c.classList.remove("active"));
+
+    
+    aba.classList.add("active");
+    const id = aba.dataset.tab;
+    document.getElementById(id).classList.add("active");
+  });
+});
